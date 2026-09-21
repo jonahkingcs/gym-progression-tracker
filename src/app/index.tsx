@@ -8,6 +8,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -29,13 +30,17 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
+  const theme = useTheme();
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <ThemedView style={styles.heroSection}>
           <AnimatedIcon />
           <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
+            Track Your Gym <ThemedText type="title" themeColor="textAccentBlue" style={styles.title}>
+              Progression
+            </ThemedText>
           </ThemedText>
         </ThemedView>
 

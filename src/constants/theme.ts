@@ -14,42 +14,32 @@ export const Colors = {
     backgroundElement: '#F0F0F3',
     backgroundSelected: '#E0E1E6',
     textSecondary: '#60646C',
+    textAccentOrange: '#FB590E',
+    textAccentBlue: '#3A86FF',
+    buttonBackground: '#FB590E',
   },
   dark: {
     text: '#ffffff',
-    background: '#000000',
+    background: '#0c0005',
     backgroundElement: '#212225',
     backgroundSelected: '#2E3135',
     textSecondary: '#B0B4BA',
+    textAccentOrange: '#FB590E',
+    textAccentBlue: '#3A86FF',
+    buttonBackground: '#FB590E',
   },
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
+export const Fonts = {
+  sans: 'Merriweather',
+  sansBold: 'MerriweatherBold',
+  serif: 'Merriweather',
+  serifBold: 'MerriweatherBold',
+  rounded: 'Merriweather',
+  mono: 'monospace',
+}
 
 export const Spacing = {
   half: 2,

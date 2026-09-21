@@ -57,9 +57,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content: {
-    marginTop: Spacing.three,
+    marginTop: Spacing.two,
     borderRadius: Spacing.three,
-    marginLeft: Spacing.four,
     padding: Spacing.four,
   },
 });
