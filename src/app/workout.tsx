@@ -36,17 +36,16 @@ export default function Workout() {
             <ThemedView style={styles.container}>
                 <ThemedView style={styles.headingContainer}>
                     <ThemedView style={styles.counterContainer}>
-                        <ThemedText type="default" themeColor="textSecondary">1/6</ThemedText>
+                        <ThemedText type="defaultCode" themeColor="textSecondary">1/6</ThemedText>
                     </ThemedView>
-                    <ThemedView style={styles.workoutTitleContainer}>
-                         <ThemedText type="default" themeColor="background">Push Day</ThemedText>
-                    </ThemedView>
-                </ThemedView>
 
-                <ThemedView style={styles.exerciseIcon}>
+                    <ThemedView style={styles.workoutTitleContainer}>
+                         <ThemedText type="defaultCode" themeColor="background">Push Day</ThemedText>
+                    </ThemedView>
                 </ThemedView>
 
                 <ExerciseWidget/>
+
             </ThemedView>
         </ScrollView>
     )
@@ -63,6 +62,7 @@ const styles = StyleSheet.create({
     container: {
         maxWidth: MaxContentWidth,
         flexGrow: 1,
+        padding: Spacing.five
     },
     headingContainer: {
         flexDirection: 'row',
@@ -80,14 +80,6 @@ const styles = StyleSheet.create({
         borderRadius: Spacing.five,
     },
     counterContainer: {
-        backgroundColor: '#FFF0E8',
-        paddingHorizontal: Spacing.three,
-        paddingVertical: Spacing.two,
-        borderRadius: Spacing.five,
-    },
-    exerciseIcon: {
-        width: 100,
-        height: 100,
         backgroundColor: '#FFF0E8',
         paddingHorizontal: Spacing.three,
         paddingVertical: Spacing.two,

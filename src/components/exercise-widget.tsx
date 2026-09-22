@@ -24,23 +24,79 @@ export function ExerciseWidget({
     }
     
     return (
-        <View>
+        <View style={styles.container}>
             <ThemedView style={[styles.exerciseIcon, { backgroundColor: theme[themeColor ?? 'softOrange'] }]}>
             </ThemedView>
-            <ThemedText type="default" themeColor="textSecondary">Exercise Type</ThemedText>
-            <ThemedText type="subtitle" themeColor="text">Exercise Name</ThemedText>
+            <ThemedText type="defaultCode" themeColor="textSecondary">Exercise Type</ThemedText>
+            <ThemedText type="title" themeColor="text">Exercise Name</ThemedText>
             <ThemedText type="default" themeColor="textSecondary">Description: i.e. great compound exercise</ThemedText>
+
+            <ThemedView style={[styles.targetsContainer, { backgroundColor: theme[themeColor ?? 'softOrange'] }]}>
+
+                <ThemedView style={[styles.targetContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
+                    <ThemedView style={[styles.exerciseIcon, { backgroundColor: theme[themeColor ?? 'background'] }]}>
+                    </ThemedView>
+
+                    <ThemedView style={[styles.targetTextContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
+                        <ThemedText type="defaultCode" themeColor="textSecondary">Target Weight</ThemedText>
+                        <ThemedText type="subtitle" themeColor="text">24 kg</ThemedText>
+                    </ThemedView>                   
+                </ThemedView>
+
+                <ThemedView style={[styles.divider, { backgroundColor: theme[themeColor ?? 'dividerColor'] }]} />
+
+                <ThemedView style={[styles.targetContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
+                    <ThemedView style={[styles.exerciseIcon, { backgroundColor: theme[themeColor ?? 'background'] }]}>
+                    </ThemedView>
+                    
+                    <ThemedView style={[styles.targetTextContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
+                        <ThemedText type="defaultCode" themeColor="textSecondary">Target Reps</ThemedText>
+                        <ThemedText type="subtitle" themeColor="text">8 - 12</ThemedText>
+                    </ThemedView>
+                </ThemedView>
+
+            </ThemedView>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        gap: Spacing.two
+    },
     exerciseIcon: {
-        width: 100,
-        height: 100,
+        width: 60,
+        height: 60,
         backgroundColor: '#FFF0E8',
         paddingHorizontal: Spacing.three,
         paddingVertical: Spacing.two,
+        borderRadius: Spacing.three,
+    },
+    targetsContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         borderRadius: Spacing.five,
-    }
+        padding: Spacing.two,
+        marginTop: Spacing.four
+    },
+    targetContainer: {
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: Spacing.four,
+        padding: Spacing.two,
+        borderRadius: Spacing.five
+    },
+    targetTextContainer: {
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        gap: Spacing.two
+    },
+    divider: {
+        width: 1,
+        height: '60%',
+        marginHorizontal: Spacing.one,
+        opacity: 0.8,
+    },
 });
