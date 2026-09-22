@@ -1,4 +1,5 @@
 import { useTheme } from '@/hooks/use-theme';
+import { SymbolView } from 'expo-symbols';
 import { Platform, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -36,11 +37,25 @@ export default function Workout() {
             <ThemedView style={styles.container}>
                 <ThemedView style={styles.headingContainer}>
                     <ThemedView style={styles.counterContainer}>
-                        <ThemedText type="defaultCode" themeColor="textSecondary">1/6</ThemedText>
+                        <SymbolView
+                            name={{ ios: 'return', android: 'keyboard_return', web: 'keyboard_return' }}
+                            size={24}
+                            tintColor={theme.deepOrange}
+                        />
+
+                        <ThemedText type="defaultCode" themeColor="text">1/6</ThemedText>
+
                     </ThemedView>
 
                     <ThemedView style={styles.workoutTitleContainer}>
+                        <SymbolView
+                            name={{ ios: 'dumbbell.fill', android: 'fitness_center', web: 'fitness_center' }}
+                            size={24}
+                            tintColor={theme.background}
+                        />
+
                          <ThemedText type="defaultCode" themeColor="background">Push Day</ThemedText>
+
                     </ThemedView>
                 </ThemedView>
 
@@ -78,12 +93,18 @@ const styles = StyleSheet.create({
         paddingHorizontal: Spacing.three,
         paddingVertical: Spacing.two,
         borderRadius: Spacing.five,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.two
     },
     counterContainer: {
         backgroundColor: '#FFF0E8',
         paddingHorizontal: Spacing.three,
         paddingVertical: Spacing.two,
         borderRadius: Spacing.five,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.two
     },
     sectionsWrapper: {
         gap: Spacing.two,
