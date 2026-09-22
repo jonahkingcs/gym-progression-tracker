@@ -27,6 +27,12 @@ export default function AppTabs() {
           <TabTrigger name="explore" href="/explore" asChild>
             <TabButton>Explore</TabButton>
           </TabTrigger>
+          <TabTrigger name="workouts" href="/workoutsScreen" asChild>
+            <TabButton>Workouts</TabButton>
+          </TabTrigger>
+          <TabTrigger name="workout" href="/workout" asChild>
+            <TabButton>Workout</TabButton>
+          </TabTrigger>
           <TabTrigger name="profile" href="/profile" asChild>
             <TabButton>Profile</TabButton>
           </TabTrigger>

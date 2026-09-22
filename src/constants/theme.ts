@@ -9,14 +9,18 @@ import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
+    text: '#172033',
+    background: '#FFFCF9',
     backgroundElement: '#F0F0F3',
     backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    textSecondary: '#667085',
     textAccentOrange: '#FB590E',
     textAccentBlue: '#3A86FF',
     buttonBackground: '#FB590E',
+    deepOrange: '#D94708',
+    softOrange: '#FFF0E8',
+    workoutWidgetBackground: '#e9e9ff',
+    exerciseWidgetBackground: '#FFFFFF',
   },
   dark: {
     text: '#ffffff',
@@ -27,6 +31,10 @@ export const Colors = {
     textAccentOrange: '#FB590E',
     textAccentBlue: '#3A86FF',
     buttonBackground: '#FB590E',
+    deepOrange: '#D94708',
+    softOrange: '#FFF0E8',
+    workoutWidgetBackground: '#e9e9ff',
+    exerciseWidgetBackground: '#e9e9ff',
   },
 } as const;
 

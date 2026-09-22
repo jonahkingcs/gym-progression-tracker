@@ -15,11 +15,12 @@ export function ThemedInput({ placeholder, value, onChangeText, themeColor }: Th
     const theme = useTheme();
   
     return (
-        <View>
+        <View style={styles.widgetContainer}>
             <TextInput
                 style={[
                     styles.inputContainer,
                     { color: theme[themeColor ?? 'text'] },
+                    { backgroundColor: theme['background'] },
                 ]}
                 placeholder={placeholder}
                 value={value}
@@ -31,9 +32,14 @@ export function ThemedInput({ placeholder, value, onChangeText, themeColor }: Th
 }
 
 const styles = StyleSheet.create({
+    widgetContainer: {
+        padding: 10,
+        marginVertical: 10,
+        borderRadius: 8,
+        alignItems: 'center',
+        width: '100%',
+    },
     inputContainer: {
-        borderWidth: 1,
-        borderColor: '#ccc',
         borderRadius: 5,
         padding: 10,
         marginVertical: 10,
