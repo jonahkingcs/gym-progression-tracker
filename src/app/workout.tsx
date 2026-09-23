@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
         width: '100%',
         gap: Spacing.three,
         alignItems: 'center',
-        paddingTop: Spacing.six,
         marginBottom: Spacing.four,
     },
     workoutTitleContainer: {

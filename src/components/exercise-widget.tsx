@@ -1,3 +1,4 @@
+import { SymbolView } from 'expo-symbols';
 import { StyleSheet, View } from 'react-native';
 
 import { Spacing, ThemeColor } from '@/constants/theme';
@@ -27,6 +28,7 @@ export function ExerciseWidget({
         <View style={styles.container}>
             <ThemedView style={[styles.exerciseIcon, { backgroundColor: theme[themeColor ?? 'softOrange'] }]}>
             </ThemedView>
+            
             <ThemedText type="defaultCode" themeColor="textSecondary">Exercise Type</ThemedText>
             <ThemedText type="title" themeColor="text">Exercise Name</ThemedText>
             <ThemedText type="default" themeColor="textSecondary">Description: i.e. great compound exercise</ThemedText>
@@ -56,6 +58,24 @@ export function ExerciseWidget({
                 </ThemedView>
 
             </ThemedView>
+
+            <View style={styles.setsSubtitleContainer}>
+                <ThemedText type="subtitle" themeColor="text">Your Sets</ThemedText>
+
+                <View style={styles.resetContainer}>
+                    <SymbolView
+                        name={{ 
+                            ios: 'arrow.counterclockwise', 
+                            android: 'restart_alt', 
+                            web: 'restart_alt' 
+                        }}
+                        size={20}
+                        tintColor={theme.textSecondary}
+                    />
+                    <ThemedText type="defaultCode" themeColor="textSecondary">Reset</ThemedText>
+                </View>
+            </View>
+
         </View>
     );
 }
@@ -77,7 +97,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: Spacing.five,
         padding: Spacing.two,
-        marginTop: Spacing.four
+        marginTop: Spacing.four,
+        marginBottom: Spacing.four
     },
     targetContainer: {
         flexDirection: 'row',
@@ -99,4 +120,14 @@ const styles = StyleSheet.create({
         marginHorizontal: Spacing.one,
         opacity: 0.8,
     },
+    setsSubtitleContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    resetContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.two
+    }
 });
