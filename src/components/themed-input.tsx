@@ -1,17 +1,17 @@
+import { Fonts, Spacing, ThemeColor } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 import { StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-
-import { Fonts, ThemeColor } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
 
 type ThemedInputProps = {
     placeholder?: string;
     value?: string;
     onChangeText?: (text: string) => void;
     themeColor?: ThemeColor;
+    backgroundColor?: ThemeColor;
 }
 
-export function ThemedInput({ placeholder, value, onChangeText, themeColor }: ThemedInputProps & { onChangeText: (text: string) => void }) { 
+export function ThemedInput({ placeholder, value, onChangeText, themeColor, backgroundColor }: ThemedInputProps & { onChangeText: (text: string) => void }) { 
     const theme = useTheme();
   
     return (
@@ -20,7 +20,7 @@ export function ThemedInput({ placeholder, value, onChangeText, themeColor }: Th
                 style={[
                     styles.inputContainer,
                     { color: theme[themeColor ?? 'text'] },
-                    { backgroundColor: theme['background'] },
+                    { backgroundColor: theme[backgroundColor ?? 'backgroundElement'] },
                 ]}
                 placeholder={placeholder}
                 value={value}
@@ -33,18 +33,17 @@ export function ThemedInput({ placeholder, value, onChangeText, themeColor }: Th
 
 const styles = StyleSheet.create({
     widgetContainer: {
-        padding: 10,
-        marginVertical: 10,
-        borderRadius: 8,
+        borderRadius: Spacing.four,
         alignItems: 'center',
         width: '100%',
     },
     inputContainer: {
-        borderRadius: 5,
-        padding: 10,
-        marginVertical: 10,
+        width: '100%',
+        borderRadius: Spacing.three,
+        padding: Spacing.two,
+        marginVertical: Spacing.two,
         fontFamily: Fonts.sans,
-        fontSize: 16,
-        lineHeight: 24,
+        fontSize: 12,
+        lineHeight: 20,
     },
 })

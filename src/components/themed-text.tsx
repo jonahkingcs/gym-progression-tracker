@@ -4,7 +4,7 @@ import { Fonts, ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export type ThemedTextProps = TextProps & {
-  type?: 'default' | 'defaultCode' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code';
+  type?: 'default' | 'defaultBold' | 'smallCode' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code';
   themeColor?: ThemeColor;
 };
 
@@ -16,7 +16,8 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
       style={[
         { color: theme[themeColor ?? 'text'] },
         type === 'default' && styles.default,
-        type === 'defaultCode' && styles.defaultCode,
+        type === 'defaultBold' && styles.defaultBold,
+        type === 'smallCode' && styles.smallCode,
         type === 'title' && styles.title,
         type === 'small' && styles.small,
         type === 'smallBold' && styles.smallBold,
@@ -34,55 +35,62 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
 const styles = StyleSheet.create({
   small: {
     fontFamily: Fonts.sans,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 10,
+    lineHeight: 16,
   },
 
   smallBold: {
     fontFamily: Fonts.sansBold,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 10,
+    lineHeight: 16,
   },
 
   default: {
     fontFamily: Fonts.sans,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 12,
+    lineHeight: 20,
   },
 
-  defaultCode: {
+  defaultBold: {
+    fontFamily: Fonts.sansBold,
+    fontSize: 12,
+    lineHeight: 20
+  },
+
+  smallCode: {
     fontFamily: Fonts.mono,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 10,
+    lineHeight: 16
   },
 
   title: {
     fontFamily: Fonts.sansBold,
-    fontSize: 48,
-    lineHeight: 52,
+    fontSize: 36,
+    lineHeight: 44,
   },
 
   subtitle: {
     fontFamily: Fonts.sansBold,
-    fontSize: 32,
-    lineHeight: 44,
+    fontSize: 24,
+    lineHeight: 30,
   },
 
   link: {
     fontFamily: Fonts.sans,
     lineHeight: 30,
-    fontSize: 14,
+    fontSize: 10,
   },
 
   linkPrimary: {
     fontFamily: Fonts.sans,
     lineHeight: 30,
-    fontSize: 14,
+    fontSize: 10,
     color: '#3c87f7',
   },
 
   code: {
     fontFamily: Fonts.mono,
     fontSize: 12,
+    lineHeight: 20,
   },
 });

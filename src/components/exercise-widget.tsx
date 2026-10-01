@@ -3,10 +3,10 @@ import { StyleSheet, View } from 'react-native';
 
 import { Spacing, ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { SetWidget } from './set-widget';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
-import { useState } from 'react';
 
 type ExerciseWidgetProps = {
     themeColor?: ThemeColor;
@@ -16,22 +16,20 @@ export function ExerciseWidget({
     themeColor,
 }: ExerciseWidgetProps) {
     const theme = useTheme();
-
-    const [weight, setWeight] = useState('');
-
-    const handleWeightChange = (text: string) => {
-        setWeight(text);
-        console.log('Weight input:', text);
-    }
     
     return (
         <View style={styles.container}>
             <ThemedView style={[styles.exerciseIcon, { backgroundColor: theme[themeColor ?? 'softOrange'] }]}>
+                <SymbolView
+                    name={{ ios: 'dumbbell.fill', android: 'fitness_center', web: 'fitness_center' }}
+                    size={48}
+                    tintColor={theme.textAccentOrange}
+                />
             </ThemedView>
             
-            <ThemedText type="defaultCode" themeColor="textSecondary">Exercise Type</ThemedText>
+            <ThemedText type="code" themeColor="textSecondary">Exercise Type</ThemedText>
             <ThemedText type="title" themeColor="text">Exercise Name</ThemedText>
-            <ThemedText type="default" themeColor="textSecondary">Description: i.e. great compound exercise</ThemedText>
+            <ThemedText type="code" themeColor="textSecondary">Description: i.e. great compound exercise</ThemedText>
 
             <ThemedView style={[styles.targetsContainer, { backgroundColor: theme[themeColor ?? 'softOrange'] }]}>
 
@@ -40,7 +38,7 @@ export function ExerciseWidget({
                     </ThemedView>
 
                     <ThemedView style={[styles.targetTextContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
-                        <ThemedText type="defaultCode" themeColor="textSecondary">Target Weight</ThemedText>
+                        <ThemedText type="code" themeColor="textSecondary">Target Weight</ThemedText>
                         <ThemedText type="subtitle" themeColor="text">24 kg</ThemedText>
                     </ThemedView>                   
                 </ThemedView>
@@ -52,7 +50,7 @@ export function ExerciseWidget({
                     </ThemedView>
                     
                     <ThemedView style={[styles.targetTextContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
-                        <ThemedText type="defaultCode" themeColor="textSecondary">Target Reps</ThemedText>
+                        <ThemedText type="code" themeColor="textSecondary">Target Reps</ThemedText>
                         <ThemedText type="subtitle" themeColor="text">8 - 12</ThemedText>
                     </ThemedView>
                 </ThemedView>
@@ -72,9 +70,37 @@ export function ExerciseWidget({
                         size={20}
                         tintColor={theme.textSecondary}
                     />
-                    <ThemedText type="defaultCode" themeColor="textSecondary">Reset</ThemedText>
+                    <ThemedText type="code" themeColor="textSecondary">Reset</ThemedText>
                 </View>
             </View>
+
+            <View style={styles.setsContainer}>
+                <SetWidget></SetWidget>
+                <SetWidget></SetWidget>
+                <SetWidget></SetWidget>
+            </View>
+
+            <ThemedView style={[
+                styles.tipContainer,
+                { backgroundColor: theme[themeColor ?? 'softOrange']}
+            ]}>
+                <ThemedView style={[styles.circleIcon, { backgroundColor: theme[themeColor ?? 'buttonBackground']}]}>
+                    <ThemedText type="subtitle" themeColor="background">i</ThemedText>
+                </ThemedView>
+
+                <View style={styles.tipTextContainer}>
+                    <View style={styles.tipText}>
+                        <ThemedText type="code" themeColor="textAccentOrange">Tip</ThemedText>
+                        <ThemedText type="code" themeColor="textSecondary">Since you hit 12 reps on all three sets last week, it is time to increase your weight.</ThemedText>
+                    </View>
+
+                    <SymbolView
+                        name={{ ios: 'return', android: 'keyboard_return', web: 'keyboard_return' }}
+                        size={24}
+                        tintColor={theme.textAccentOrange}
+                    />
+                </View>
+            </ThemedView>
 
         </View>
     );
@@ -82,22 +108,24 @@ export function ExerciseWidget({
 
 const styles = StyleSheet.create({
     container: {
-        gap: Spacing.two
+        gap: Spacing.two,
+        flexDirection: 'column'
     },
     exerciseIcon: {
         width: 60,
         height: 60,
         backgroundColor: '#FFF0E8',
-        paddingHorizontal: Spacing.three,
-        paddingVertical: Spacing.two,
         borderRadius: Spacing.three,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     targetsContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         borderRadius: Spacing.five,
         padding: Spacing.two,
-        marginTop: Spacing.four,
+        marginTop: Spacing.two,
         marginBottom: Spacing.four
     },
     targetContainer: {
@@ -129,5 +157,36 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: Spacing.two
-    }
+    },
+    setsContainer: {
+        flexDirection: 'row',
+        gap: Spacing.two,
+        justifyContent: 'flex-start'
+    },
+    tipContainer: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        borderRadius: Spacing.five,
+        paddingHorizontal: Spacing.four,
+        paddingVertical: Spacing.three,
+        marginTop: Spacing.two,
+        marginBottom: Spacing.four,
+        gap: Spacing.three
+    },
+    circleIcon: {
+        width: 30,
+        height: 30,
+        borderRadius: Spacing.four,
+        flexDirection: 'column',
+        alignItems: 'center'
+    },
+    tipTextContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    tipText: {
+        marginRight: Spacing.four,
+        flex: 1
+    },
 });

@@ -10,6 +10,7 @@ import { Platform } from 'react-native';
 export const Colors = {
   light: {
     text: '#172033',
+    white: '#ffffff',
     background: '#FFFCF9',
     backgroundElement: '#F0F0F3',
     backgroundSelected: '#E0E1E6',
@@ -25,6 +26,7 @@ export const Colors = {
   },
   dark: {
     text: '#ffffff',
+    white: '#ffffff',
     background: '#0c0005',
     backgroundElement: '#212225',
     backgroundSelected: '#2E3135',
@@ -59,6 +61,7 @@ export const Spacing = {
   four: 24,
   five: 32,
   six: 64,
+  seven:  96
 } as const;
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;

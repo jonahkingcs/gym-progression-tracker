@@ -1,40 +1,20 @@
 import { useTheme } from '@/hooks/use-theme';
 import { SymbolView } from 'expo-symbols';
-import { Platform, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ExerciseWidget } from '@/components/exercise-widget';
+import { ThemedButton } from '@/components/themed-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 
 export default function Workout() {
-    const safeAreaInsets = useSafeAreaInsets();
-    const insets = {
-        ...safeAreaInsets,
-        bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
-    };
     const theme = useTheme()
 
-    const contentPlatformStyle = Platform.select({
-        android: {
-            paddingTop: insets.top,
-            paddingLeft: insets.left,
-            paddingRight: insets.right,
-            paddingBottom: insets.bottom,
-        },
-        web: {
-            paddingTop: Spacing.six,
-            paddingBottom: Spacing.four,
-        },
-    });
-
     return (
-        <ScrollView
-            style={[styles.scrollView, { backgroundColor: theme.background }]}
-            contentInset={insets}
-            contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
-            <ThemedView style={styles.container}>
+        <ThemedView style={styles.container}>
+            <SafeAreaView style={styles.safeArea}>
                 <ThemedView style={styles.headingContainer}>
                     <ThemedView style={styles.counterContainer}>
                         <SymbolView
@@ -43,7 +23,7 @@ export default function Workout() {
                             tintColor={theme.deepOrange}
                         />
 
-                        <ThemedText type="defaultCode" themeColor="text">1/6</ThemedText>
+                        <ThemedText type="code" themeColor="text">1/6</ThemedText>
 
                     </ThemedView>
 
@@ -54,38 +34,46 @@ export default function Workout() {
                             tintColor={theme.background}
                         />
 
-                         <ThemedText type="defaultCode" themeColor="background">Push Day</ThemedText>
+                         <ThemedText type="code" themeColor="background">Push Day</ThemedText>
 
                     </ThemedView>
                 </ThemedView>
 
                 <ExerciseWidget/>
 
-            </ThemedView>
-        </ScrollView>
+                <View style={styles.navigationContainer}>
+                    <ThemedButton text="<" onPress={() => {}} themeColor="softOrange" textColor="textAccentOrange"></ThemedButton>
+    
+                    <ThemedText type="smallCode" themeColor="textSecondary">Swipe left or right to move between exercises.</ThemedText>
+    
+                    <ThemedButton text=">" onPress={() => {}} themeColor="softOrange" textColor="textAccentOrange"></ThemedButton>
+                </View>
+
+            </SafeAreaView>
+        </ThemedView>
     )
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
+    container: {
         flex: 1,
     },
-    contentContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    container: {
+    safeArea: {
+        flex: 1,
+        width: '100%',
         maxWidth: MaxContentWidth,
-        flexGrow: 1,
-        padding: Spacing.five
+        alignSelf: 'center',
+        paddingBottom: BottomTabInset + Spacing.three,
+        paddingHorizontal: Spacing.three,
+        paddingTop: Spacing.seven
     },
     headingContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
-        gap: Spacing.three,
+        gap: Spacing.two,
         alignItems: 'center',
-        marginBottom: Spacing.four,
+        marginBottom: Spacing.three,
     },
     workoutTitleContainer: {
         backgroundColor: '#FB590E',
@@ -117,4 +105,9 @@ const styles = StyleSheet.create({
     collapsible: {
         backgroundColor: '#000000',
     },
+    navigationContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    }
 })

@@ -8,12 +8,14 @@ type ThemedButtonProps = {
     text: string;
     onPress: () => void;
     themeColor?: ThemeColor;
+    textColor? : ThemeColor;
 };
 
 export function ThemedButton({
     text,
     onPress,
     themeColor,
+    textColor
 }: ThemedButtonProps) {
     const theme = useTheme();
 
@@ -27,7 +29,7 @@ export function ThemedButton({
                 },
             ]}
         >
-            <ThemedText type="default">
+            <ThemedText type="default" themeColor={textColor ?? "text"}>
                 {text}
             </ThemedText>
         </Pressable>
@@ -36,8 +38,6 @@ export function ThemedButton({
 
 const styles = StyleSheet.create({
     buttonContainer: {
-        borderWidth: 1,
-        borderColor: '#ccc',
         borderRadius: 5,
         padding: 10,
         marginVertical: 10,
