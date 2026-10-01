@@ -8,11 +8,22 @@ import { ThemedButton } from '@/components/themed-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useAuth } from '@/context/auth-context';
 
 export default function Workout() {
     const theme = useTheme()
 
-    return (
+    const { user, loading } = useAuth();
+
+    if (loading) return (
+        <ThemedView style={styles.container}>
+            <SafeAreaView style={styles.safeArea}>
+                <ThemedText>Loading...</ThemedText>
+            </SafeAreaView>
+        </ThemedView>
+    )
+
+    if (user) return (
         <ThemedView style={styles.container}>
             <SafeAreaView style={styles.safeArea}>
                 <ThemedView style={styles.headingContainer}>
@@ -49,6 +60,16 @@ export default function Workout() {
                     <ThemedButton text=">" onPress={() => {}} themeColor="softOrange" textColor="textAccentOrange"></ThemedButton>
                 </View>
 
+            </SafeAreaView>
+        </ThemedView>
+    )
+
+    return (
+        <ThemedView style={styles.container}>
+            <SafeAreaView style={styles.safeArea}>
+                <ThemedView style={styles.headingContainer}>
+                    <ThemedText type="subtitle" themeColor='buttonBackground'>You need to be logged in to view this page.</ThemedText>
+                </ThemedView>
             </SafeAreaView>
         </ThemedView>
     )

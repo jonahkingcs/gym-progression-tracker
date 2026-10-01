@@ -1,7 +1,7 @@
 import { useTheme } from '@/hooks/use-theme';
 import { useState } from 'react';
 import { Platform, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedButton } from '@/components/themed-button';
 import { ThemedInput } from '@/components/themed-input';
@@ -9,6 +9,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Collapsible } from '@/components/ui/collapsible';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useAuth } from '@/context/auth-context';
 
 export default function Profile() {
     const safeAreaInsets = useSafeAreaInsets();
@@ -17,6 +18,8 @@ export default function Profile() {
         bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
     };
     const theme = useTheme()
+
+    const { user, loading } = useAuth();
 
     const contentPlatformStyle = Platform.select({
         android: {
@@ -45,7 +48,15 @@ export default function Profile() {
         setExerciseWeight(0);
     }
 
-    return (
+    if (loading) return (
+        <ThemedView style={styles.container}>
+            <SafeAreaView style={styles.safeArea}>
+                <ThemedText>Loading...</ThemedText>
+            </SafeAreaView>
+        </ThemedView>
+    )
+
+    if (user) return (
         <ScrollView
             style={[styles.scrollView, { backgroundColor: theme.background }]}
             contentInset={insets}
@@ -53,6 +64,7 @@ export default function Profile() {
             <ThemedView style={styles.container}>
                 <ThemedView style={styles.headingContainer}>
                     <ThemedText type="subtitle">Profile</ThemedText>
+                    <ThemedText>{user.email}</ThemedText>
                     <ThemedText themeColor="textSecondary">
                         View your stats and progress here.
                     </ThemedText>
@@ -78,6 +90,16 @@ export default function Profile() {
                 </ThemedView>
             </ThemedView>
         </ScrollView>
+    )
+
+    return (
+        <ThemedView style={styles.container}>
+            <SafeAreaView style={styles.safeArea}>
+                <ThemedView style={styles.headingContainer}>
+                    <ThemedText type="subtitle" themeColor='buttonBackground'>You need to be logged in to view this page.</ThemedText>
+                </ThemedView>
+            </SafeAreaView>
+        </ThemedView>
     )
 }
 
@@ -111,5 +133,14 @@ const styles = StyleSheet.create({
     },
     collapsible: {
         backgroundColor: '#000000',
+    },
+    safeArea: {
+        flex: 1,
+        width: '100%',
+        maxWidth: MaxContentWidth,
+        alignSelf: 'center',
+        paddingBottom: BottomTabInset + Spacing.three,
+        paddingHorizontal: Spacing.three,
+        paddingTop: Spacing.seven
     },
 })

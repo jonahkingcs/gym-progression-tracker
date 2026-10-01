@@ -1,63 +1,122 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { Alert, Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
+import { ThemedButton } from '@/components/themed-button';
+import { ThemedInput } from '@/components/themed-input';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { useAuth } from '@/context/auth-context';
+import { supabase } from '@/lib/supabase';
+import { useState } from 'react';
 
 export default function HomeScreen() {
   const theme = useTheme();
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const { user, loading } = useAuth();
+
+  const handleLogin = async () => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      if (Platform.OS === 'web') {
+        window.alert(`Login failed: ${error.message}`);
+      } else {
+        Alert.alert('Login failed', error.message);
+      }
+
+      return;
+    }
+
+    if (Platform.OS === 'web') {
+      window.alert(`Success! Logged in as ${data.user.email}`);
+    } else {
+      Alert.alert('Success', `Logged in as ${data.user.email}`);
+    }
+  };
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.log('Error logging out:', error.message);
+      return;
+    }
+
+    console.log('Logged out');
+  };
+
+  if (loading) {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+          <ThemedText>Loading...</ThemedText>
+        </SafeAreaView>
+      </ThemedView>
+    );
+  }
+
+  if (user) {
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+          <ThemedView style={styles.loginContainer}>
+            <ThemedText type="title">
+              You're logged in!
+            </ThemedText>
+
+            <ThemedText>
+              Logged in as:
+            </ThemedText>
+
+            <ThemedText>
+              {user.email}
+            </ThemedText>
+
+            <ThemedButton
+              text="Log out"
+              onPress={handleLogout}
+            />
+          </ThemedView>
+
+          {Platform.OS === 'web' && <WebBadge />}
+        </SafeAreaView>
+      </ThemedView>
+    );
+  }
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Track Your Gym <ThemedText type="title" themeColor="textAccentBlue" style={styles.title}>
-              Progression
-            </ThemedText>
+        <ThemedView style={styles.loginContainer}>
+          <ThemedText type="title">
+            Track Your Gym Progression
           </ThemedText>
-        </ThemedView>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+          <ThemedText>
+            Log in to your account
+          </ThemedText>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+          <ThemedInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
+
+          <ThemedInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
           />
+
+          <ThemedButton text="Log in" onPress={handleLogin} />
+
         </ThemedView>
 
         {Platform.OS === 'web' && <WebBadge />}
@@ -79,25 +138,13 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     paddingBottom: BottomTabInset + Spacing.three,
     maxWidth: MaxContentWidth,
+    marginTop: Spacing.seven
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
+    loginContainer: {
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
     gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+    paddingHorizontal: Spacing.four,
   },
 });
