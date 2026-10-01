@@ -21,7 +21,7 @@ export function ExerciseWidget({
         <View style={styles.container}>
             <ThemedView style={[styles.exerciseIcon, { backgroundColor: theme[themeColor ?? 'softOrange'] }]}>
                 <SymbolView
-                    name={{ ios: 'dumbbell.fill', android: 'fitness_center', web: 'fitness_center' }}
+                    name={{ ios: 'figure.mixed.cardio', android: 'exercise', web: 'exercise' }}
                     size={48}
                     tintColor={theme.textAccentOrange}
                 />
@@ -35,6 +35,11 @@ export function ExerciseWidget({
 
                 <ThemedView style={[styles.targetContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
                     <ThemedView style={[styles.exerciseIcon, { backgroundColor: theme[themeColor ?? 'background'] }]}>
+                        <SymbolView
+                            name={{ ios: 'figure.strengthtraining.traditional', android: 'weight', web: 'weight' }}
+                            size={48}
+                            tintColor={theme.textAccentOrange}
+                        />
                     </ThemedView>
 
                     <ThemedView style={[styles.targetTextContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
@@ -47,6 +52,11 @@ export function ExerciseWidget({
 
                 <ThemedView style={[styles.targetContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
                     <ThemedView style={[styles.exerciseIcon, { backgroundColor: theme[themeColor ?? 'background'] }]}>
+                        <SymbolView
+                            name={{ ios: 'target', android: 'target', web: 'target' }}
+                            size={48}
+                            tintColor={theme.textAccentOrange}
+                        />
                     </ThemedView>
                     
                     <ThemedView style={[styles.targetTextContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>

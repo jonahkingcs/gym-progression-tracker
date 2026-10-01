@@ -29,7 +29,7 @@ export default function Workout() {
 
                     <ThemedView style={styles.workoutTitleContainer}>
                         <SymbolView
-                            name={{ ios: 'dumbbell.fill', android: 'fitness_center', web: 'fitness_center' }}
+                            name={{ ios: 'flame', android: 'mode_heat', web: 'mode_heat' }}
                             size={24}
                             tintColor={theme.background}
                         />
