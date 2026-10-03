@@ -6,6 +6,9 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WorkoutWidget } from '@/components/workout-widget';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useAuth } from '@/context/auth-context';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 export default function WorkoutsScreen() {
     const safeAreaInsets = useSafeAreaInsets();
@@ -13,7 +16,7 @@ export default function WorkoutsScreen() {
         ...safeAreaInsets,
         bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
     };
-    const theme = useTheme()
+    const theme = useTheme();
 
     const contentPlatformStyle = Platform.select({
         android: {
@@ -28,12 +31,31 @@ export default function WorkoutsScreen() {
         },
     });
 
-    const workouts = [
-        { name: 'Monday - Push Day 1', exercises: [] },
-        { name: 'Tuesday - Pull Day 1', exercises: [] },
-        { name: 'Thursday - Push Day 2', exercises: [] },
-        { name: 'Friday - Pull Day 2', exercises: [] },
-    ];
+    const { user, loading } = useAuth();
+
+    const [workouts, setWorkouts] = useState([]);
+
+    useEffect(() => {
+        async function getWorkouts() {
+            const { data, error } = await supabase
+                .from('workouts')
+                .select()
+                .eq('user_id', user.id);
+
+            if (error) {
+                console.error('ERROR');
+                return;
+            }
+
+            setWorkouts(data);
+        }
+
+        if (!loading && user) {
+            getWorkouts();
+        }
+    }, [user, loading]);
+
+    console.log(workouts[0]);
 
     return (
         <ScrollView

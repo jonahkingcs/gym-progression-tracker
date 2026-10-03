@@ -9,11 +9,43 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useAuth } from '@/context/auth-context';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 export default function Workout() {
-    const theme = useTheme()
+    const theme = useTheme();
 
     const { user, loading } = useAuth();
+
+    const [exercises, setExercises] = useState([])
+
+    useEffect(() => {
+        async function getExercises() {
+            const { data, error } = await supabase
+                .from('workout_exercises')
+                .select(`
+                    *,
+                    exercises (
+                        name,
+                        category
+                    )
+                `)
+                .eq('workout_id', '6dd4fef6-3d2d-4034-97dd-fc545f46a637');
+
+            if (error) {
+                console.error('Error getting exercises:', error);
+                return;
+            }
+
+            setExercises(data);
+        }
+
+        if (!loading && user) {
+            getExercises();
+        }
+    }, [user, loading]);
+
+    console.log(exercises);
 
     if (loading) return (
         <ThemedView style={styles.container}>
@@ -50,7 +82,19 @@ export default function Workout() {
                     </ThemedView>
                 </ThemedView>
 
-                <ExerciseWidget/>
+
+                {exercises.length > 0 && (
+                    <ExerciseWidget
+                        exercise={{
+                            name: exercises[0].exercises.name,
+                            category: exercises[0].exercises.category,
+                            target_sets: exercises[0].target_sets,
+                            target_weight: exercises[0].target_weight,
+                            target_rep_min: exercises[0].target_rep_min,
+                            target_rep_max: exercises[0].target_rep_max,
+                        }}
+                    />
+                )}
 
                 <View style={styles.navigationContainer}>
                     <ThemedButton text="<" onPress={() => {}} themeColor="softOrange" textColor="textAccentOrange"></ThemedButton>
