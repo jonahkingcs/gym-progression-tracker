@@ -1,6 +1,6 @@
 import { useTheme } from '@/hooks/use-theme';
 import { SymbolView } from 'expo-symbols';
-import { StyleSheet, View } from 'react-native';
+import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ExerciseWidget } from '@/components/exercise-widget';
@@ -9,15 +9,46 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useAuth } from '@/context/auth-context';
-import { useEffect, useState } from 'react';
+import { ExerciseData } from '@/types/workout-types';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 export default function Workout() {
+    const slideAnim = useRef(new Animated.Value(0)).current;
+
     const theme = useTheme();
 
     const { user, loading } = useAuth();
 
-    const [exercises, setExercises] = useState([])
+    const [workoutData, setWorkoutData] = useState<ExerciseData[]>([])
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    function changeIndex(newIndex: number) {
+        if (newIndex < 0 || newIndex >= workoutData.length) {
+            return;
+        }
+
+        const direction = newIndex > currentIndex ? -1 : 1;
+
+        Animated.timing(slideAnim, {
+            toValue: direction,
+            duration: 250,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+        }).start(() => {
+            setCurrentIndex(newIndex);
+
+            slideAnim.setValue(-direction);
+            
+            Animated.timing(slideAnim, {
+                toValue: 0,
+                duration: 250,
+                easing: Easing.out(Easing.ease),
+                useNativeDriver: true,
+            }).start();
+        });
+    }
 
     useEffect(() => {
         async function getExercises() {
@@ -37,7 +68,27 @@ export default function Workout() {
                 return;
             }
 
-            setExercises(data);
+            const formattedData = (data ?? []).map(item => ({
+                exerciseId: item.exercise_id,
+                name: item.exercises.name,
+                category: item.exercises.category,
+                target: {
+                    sets: item.target_sets,
+                    weight: item.target_weight,
+                    repMin: item.target_rep_min,
+                    repMax: item.target_rep_max
+                },
+                sets: Array.from(
+                    { length: item.target_sets },
+                    (_, index) => ({
+                        setNumber: index + 1,
+                        weight: null,
+                        reps: null
+                    })
+                )
+            }));
+
+            setWorkoutData(formattedData)
         }
 
         if (!loading && user) {
@@ -45,7 +96,13 @@ export default function Workout() {
         }
     }, [user, loading]);
 
-    console.log(exercises);
+    function updateWorkoutData(updatedExercise: ExerciseData) {
+        setWorkoutData(workoutData =>
+            workoutData.map(exercise => exercise.exerciseId === updatedExercise.exerciseId ? updatedExercise : exercise)
+        );
+    }
+
+    console.log(workoutData)
 
     if (loading) return (
         <ThemedView style={styles.container}>
@@ -66,7 +123,9 @@ export default function Workout() {
                             tintColor={theme.deepOrange}
                         />
 
-                        <ThemedText type="code" themeColor="text">1/6</ThemedText>
+                        <ThemedText type="code" themeColor="text">
+                            {currentIndex + 1}/{workoutData.length}
+                        </ThemedText>
 
                     </ThemedView>
 
@@ -83,27 +142,53 @@ export default function Workout() {
                 </ThemedView>
 
 
-                {exercises.length > 0 && (
-                    <ExerciseWidget
-                        exercise={{
-                            name: exercises[0].exercises.name,
-                            category: exercises[0].exercises.category,
-                            target_sets: exercises[0].target_sets,
-                            target_weight: exercises[0].target_weight,
-                            target_rep_min: exercises[0].target_rep_min,
-                            target_rep_max: exercises[0].target_rep_max,
+                {workoutData.length > 0 && (
+                    <Animated.View
+                        style={{
+                            transform: [
+                                {
+                                    translateX: slideAnim.interpolate({
+                                        inputRange: [-1, 0, 1],
+                                        outputRange: [-500, 0, 500],
+                                    }),
+                                },
+                            ],
                         }}
-                    />
+                    >   
+                        <ExerciseWidget
+                            onExerciseChange={updateWorkoutData}
+                            exercise={workoutData[currentIndex]}
+                        />
+                    </Animated.View>
                 )}
 
                 <View style={styles.navigationContainer}>
-                    <ThemedButton text="<" onPress={() => {}} themeColor="softOrange" textColor="textAccentOrange"></ThemedButton>
-    
-                    <ThemedText type="smallCode" themeColor="textSecondary">Swipe left or right to move between exercises.</ThemedText>
-    
-                    <ThemedButton text=">" onPress={() => {}} themeColor="softOrange" textColor="textAccentOrange"></ThemedButton>
-                </View>
 
+                    <ThemedButton
+                        text="←  Previous"
+                        onPress={() => changeIndex(currentIndex - 1)}
+                        disabled={currentIndex <= 0}
+                        themeColor="softOrange"
+                        textColor="textAccentOrange"
+                    />
+
+                    <ThemedText
+                        style={styles.swipeInstructionText}
+                        type="code"
+                        themeColor="textSecondary"
+                    >
+                        Swipe to navigate
+                    </ThemedText>
+
+                    <ThemedButton
+                        text="Next  →"
+                        onPress={() => changeIndex(currentIndex + 1)}
+                        disabled={currentIndex + 1 >= workoutData.length}
+                        themeColor="softOrange"
+                        textColor="textAccentOrange"
+                    />
+
+                </View>
             </SafeAreaView>
         </ThemedView>
     )
@@ -173,6 +258,10 @@ const styles = StyleSheet.create({
     navigationContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: Spacing.two,
+    },
+    swipeInstructionText: {
+        alignSelf: 'center'
     }
 })

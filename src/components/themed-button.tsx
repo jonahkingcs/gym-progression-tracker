@@ -7,6 +7,7 @@ import { ThemedText } from './themed-text';
 type ThemedButtonProps = {
     text: string;
     onPress: () => void;
+    disabled?: boolean
     themeColor?: ThemeColor;
     textColor? : ThemeColor;
 };
@@ -14,13 +15,17 @@ type ThemedButtonProps = {
 export function ThemedButton({
     text,
     onPress,
+    disabled,
     themeColor,
     textColor
 }: ThemedButtonProps) {
     const theme = useTheme();
 
+    console.log(disabled)
+
     return (
         <Pressable
+            disabled={disabled ? disabled : false}
             onPress={onPress}
             style={[
                 styles.buttonContainer,

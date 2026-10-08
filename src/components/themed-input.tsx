@@ -6,13 +6,43 @@ import { TextInput } from 'react-native-gesture-handler';
 type ThemedInputProps = {
     placeholder?: string;
     value?: string;
-    onChangeText?: (text: string) => void;
+    onChangeText: (text: string) => void;
     themeColor?: ThemeColor;
     backgroundColor?: ThemeColor;
+    inputType?: 'text' | 'integer' | 'decimal';
 }
 
-export function ThemedInput({ placeholder, value, onChangeText, themeColor, backgroundColor }: ThemedInputProps & { onChangeText: (text: string) => void }) { 
+export function ThemedInput({
+    placeholder,
+    value,
+    onChangeText,
+    themeColor,
+    backgroundColor,
+    inputType = 'text',
+}: ThemedInputProps) {
     const theme = useTheme();
+
+    function handleChange(text: string) {
+        if (inputType === 'integer') {
+            if (/^\d*$/.test(text)) {
+                onChangeText(text);
+            } else {
+                onChangeText("");
+            }
+            return;
+        }
+
+        if (inputType === 'decimal') {
+            if (/^\d*\.?\d*$/.test(text)) {
+                onChangeText(text);
+            } else {
+                onChangeText("");
+            }
+            return;
+        }
+
+        onChangeText(text);
+    }
   
     return (
         <View style={styles.widgetContainer}>
@@ -24,7 +54,7 @@ export function ThemedInput({ placeholder, value, onChangeText, themeColor, back
                 ]}
                 placeholder={placeholder}
                 value={value}
-                onChangeText={onChangeText}
+                onChangeText={handleChange}
                 placeholderTextColor={theme.textSecondary}
             />
         </View>

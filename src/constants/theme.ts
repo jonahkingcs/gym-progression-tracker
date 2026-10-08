@@ -16,13 +16,13 @@ export const Colors = {
     backgroundSelected: '#E0E1E6',
     textSecondary: '#667085',
     textAccentOrange: '#FB590E',
-    textAccentBlue: '#3A86FF',
     buttonBackground: '#FB590E',
     deepOrange: '#D94708',
     softOrange: '#FFF0E8',
     dividerColor: '#ffcdb2',
     workoutWidgetBackground: '#e9e9ff',
     exerciseWidgetBackground: '#FFFFFF',
+    completion: '#1B8755'
   },
   dark: {
     text: '#ffffff',
@@ -39,6 +39,7 @@ export const Colors = {
     dividerColor: '#ffcdb2',
     workoutWidgetBackground: '#e9e9ff',
     exerciseWidgetBackground: '#e9e9ff',
+    completion: '#1B8755'
   },
 } as const;
 

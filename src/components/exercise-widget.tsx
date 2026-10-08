@@ -1,21 +1,44 @@
 import { SymbolView } from 'expo-symbols';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Spacing, ThemeColor } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { ExerciseWidgetProps, SetData } from '@/types/workout-types';
 import { SetWidget } from './set-widget';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
-
-type ExerciseWidgetProps = {
-    themeColor?: ThemeColor;
-};
-
 export function ExerciseWidget({
     themeColor,
+    exercise,
+    onExerciseChange
 }: ExerciseWidgetProps) {
     const theme = useTheme();
+
+    function updateSetData(updatedSet: SetData) {
+        const updatedExercise = {
+            ...exercise,
+            sets: exercise.sets.map(set => set.setNumber === updatedSet.setNumber ? updatedSet : set),
+        };
+
+        onExerciseChange(updatedExercise);
+    }
+
+    function resetSetData() {
+        const updatedExercise = {
+            ...exercise,
+            sets: Array.from(
+                { length: exercise.target.sets },
+                (_, index) => ({
+                    setNumber: index + 1,
+                    weight: null,
+                    reps: null
+                })
+            )
+        }
+
+        onExerciseChange(updatedExercise);
+    }
     
     return (
         <View style={styles.container}>
@@ -27,8 +50,8 @@ export function ExerciseWidget({
                 />
             </ThemedView>
             
-            <ThemedText type="code" themeColor="textSecondary">Exercise Type</ThemedText>
-            <ThemedText type="title" themeColor="text">Exercise Name</ThemedText>
+            <ThemedText type="code" themeColor="textSecondary">{exercise.category}</ThemedText>
+            <ThemedText type="title" themeColor="text">{exercise.name}</ThemedText>
             <ThemedText type="code" themeColor="textSecondary">Description: i.e. great compound exercise</ThemedText>
 
             <ThemedView style={[styles.targetsContainer, { backgroundColor: theme[themeColor ?? 'softOrange'] }]}>
@@ -44,7 +67,7 @@ export function ExerciseWidget({
 
                     <ThemedView style={[styles.targetTextContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
                         <ThemedText type="code" themeColor="textSecondary">Target Weight</ThemedText>
-                        <ThemedText type="subtitle" themeColor="text">24 kg</ThemedText>
+                        <ThemedText type="subtitle" themeColor="text">{exercise.target.weight} kg</ThemedText>
                     </ThemedView>                   
                 </ThemedView>
 
@@ -61,7 +84,7 @@ export function ExerciseWidget({
                     
                     <ThemedView style={[styles.targetTextContainer, { backgroundColor: theme[themeColor ?? 'softOrange']}]}>
                         <ThemedText type="code" themeColor="textSecondary">Target Reps</ThemedText>
-                        <ThemedText type="subtitle" themeColor="text">8 - 12</ThemedText>
+                        <ThemedText type="subtitle" themeColor="text">{exercise.target.repMin} - {exercise.target.repMax}</ThemedText>
                     </ThemedView>
                 </ThemedView>
 
@@ -70,7 +93,7 @@ export function ExerciseWidget({
             <View style={styles.setsSubtitleContainer}>
                 <ThemedText type="subtitle" themeColor="text">Your Sets</ThemedText>
 
-                <View style={styles.resetContainer}>
+                <Pressable onPress={resetSetData} style={styles.resetContainer}>
                     <SymbolView
                         name={{ 
                             ios: 'arrow.counterclockwise', 
@@ -81,13 +104,17 @@ export function ExerciseWidget({
                         tintColor={theme.textSecondary}
                     />
                     <ThemedText type="code" themeColor="textSecondary">Reset</ThemedText>
-                </View>
+                </Pressable>
             </View>
-
+                        
             <View style={styles.setsContainer}>
-                <SetWidget></SetWidget>
-                <SetWidget></SetWidget>
-                <SetWidget></SetWidget>
+                {exercise.sets.map(set => (
+                    <SetWidget
+                        key={set.setNumber}
+                        setData={set}
+                        onSetChange={updateSetData}
+                    />
+                ))}
             </View>
 
             <ThemedView style={[
