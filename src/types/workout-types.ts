@@ -19,6 +19,18 @@ export type ExerciseData = {
     sets: SetData[];
 };
 
+export type ExerciseTableRow = {
+    exercise_id: string;
+    exercises: {
+        name: string;
+        category: string;
+    };
+    target_sets: number;
+    target_weight: number;
+    target_rep_min: number;
+    target_rep_max: number;
+};
+
 export type ExerciseWidgetProps = {
     themeColor?: ThemeColor;
     exercise: ExerciseData;
