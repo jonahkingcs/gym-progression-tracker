@@ -3,14 +3,16 @@ import { SymbolView } from 'expo-symbols';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { CompletionWidget } from '@/components/completion-widget';
 import { ExerciseWidget } from '@/components/exercise-widget';
 import { ThemedButton } from '@/components/themed-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useAuth } from '@/context/auth-context';
-import { ExerciseData } from '@/types/workout-types';
+import { ExerciseData, ExerciseTableRow } from '@/types/workout-types';
 import { useEffect, useRef, useState } from 'react';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { supabase } from '../lib/supabase';
 
 export default function Workout() {
@@ -25,7 +27,7 @@ export default function Workout() {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     function changeIndex(newIndex: number) {
-        if (newIndex < 0 || newIndex >= workoutData.length) {
+        if (newIndex < 0 || newIndex > workoutData.length) {
             return;
         }
 
@@ -67,28 +69,32 @@ export default function Workout() {
                 console.error('Error getting exercises:', error);
                 return;
             }
+            
+            try {
+                const formattedData = (data ?? []).map((item: ExerciseTableRow) => ({
+                    exerciseId: item.exercise_id,
+                    name: item.exercises.name,
+                    category: item.exercises.category,
+                    target: {
+                        sets: item.target_sets,
+                        weight: item.target_weight,
+                        repMin: item.target_rep_min,
+                        repMax: item.target_rep_max
+                    },
+                    sets: Array.from(
+                        { length: item.target_sets },
+                        (_, index) => ({
+                            setNumber: index + 1,
+                            weight: null,
+                            reps: null
+                        })
+                    )
+                }));
 
-            const formattedData = (data ?? []).map(item => ({
-                exerciseId: item.exercise_id,
-                name: item.exercises.name,
-                category: item.exercises.category,
-                target: {
-                    sets: item.target_sets,
-                    weight: item.target_weight,
-                    repMin: item.target_rep_min,
-                    repMax: item.target_rep_max
-                },
-                sets: Array.from(
-                    { length: item.target_sets },
-                    (_, index) => ({
-                        setNumber: index + 1,
-                        weight: null,
-                        reps: null
-                    })
-                )
-            }));
-
-            setWorkoutData(formattedData)
+                setWorkoutData(formattedData)
+            } catch (error) {
+                console.error('Data formatted incorrectly:', error);
+            }
         }
 
         if (!loading && user) {
@@ -101,6 +107,19 @@ export default function Workout() {
             workoutData.map(exercise => exercise.exerciseId === updatedExercise.exerciseId ? updatedExercise : exercise)
         );
     }
+
+    const swipeGesture = Gesture.Pan()
+    .activeOffsetX([-20, 20])
+    .failOffsetY([-15, 15])
+    .onEnd((event) => {
+        if (event.translationX < -60) {
+            // Swiped left: move to the next exercise/page
+            changeIndex(currentIndex + 1);
+        } else if (event.translationX > 60) {
+            // Swiped right: move to the previous exercise/page
+            changeIndex(currentIndex - 1);
+        }
+    });
 
     console.log(workoutData)
 
@@ -116,6 +135,7 @@ export default function Workout() {
         <ThemedView style={styles.container}>
             <SafeAreaView style={styles.safeArea}>
                 <ThemedView style={styles.headingContainer}>
+
                     <ThemedView style={styles.counterContainer}>
                         <SymbolView
                             name={{ ios: 'return', android: 'keyboard_return', web: 'keyboard_return' }}
@@ -139,38 +159,52 @@ export default function Workout() {
                          <ThemedText type="code" themeColor="background">Push Day</ThemedText>
 
                     </ThemedView>
+
                 </ThemedView>
 
-
-                {workoutData.length > 0 && (
-                    <Animated.View
-                        style={{
-                            transform: [
-                                {
-                                    translateX: slideAnim.interpolate({
-                                        inputRange: [-1, 0, 1],
-                                        outputRange: [-500, 0, 500],
-                                    }),
-                                },
-                            ],
-                        }}
-                    >   
-                        <ExerciseWidget
-                            onExerciseChange={updateWorkoutData}
-                            exercise={workoutData[currentIndex]}
-                        />
-                    </Animated.View>
+                
+                {(workoutData.length > 0) && (
+                    <GestureDetector gesture={swipeGesture}>
+                        <Animated.View
+                            style={{
+                                transform: [
+                                    {
+                                        translateX: slideAnim.interpolate({
+                                            inputRange: [-1, 0, 1],
+                                            outputRange: [-500, 0, 500],
+                                        }),
+                                    },
+                                ],
+                            }}
+                        >   
+                            {(currentIndex >= 0 && currentIndex < workoutData.length) && (
+                                <ExerciseWidget
+                                    onExerciseChange={updateWorkoutData}
+                                    exercise={workoutData[currentIndex]}
+                                />
+                            )}
+                            {(currentIndex == workoutData.length && workoutData.length > 0) && (
+                                <CompletionWidget
+                                    workoutData={workoutData}
+                                    onComplete={() => {return}}
+                                    onGoBack={(index) => {setCurrentIndex(index)}}
+                                />
+                            )}
+                        </Animated.View>
+                    </GestureDetector>
                 )}
 
                 <View style={styles.navigationContainer}>
 
-                    <ThemedButton
-                        text="←  Previous"
-                        onPress={() => changeIndex(currentIndex - 1)}
-                        disabled={currentIndex <= 0}
-                        themeColor="softOrange"
-                        textColor="textAccentOrange"
-                    />
+                    <View style={styles.navigationButton}>
+                        <ThemedButton
+                            text="←  Previous"
+                            onPress={() => changeIndex(currentIndex - 1)}
+                            disabled={currentIndex <= 0}
+                            themeColor="softOrange"
+                            textColor="textAccentOrange"
+                        />
+                    </View>
 
                     <ThemedText
                         style={styles.swipeInstructionText}
@@ -180,13 +214,25 @@ export default function Workout() {
                         Swipe to navigate
                     </ThemedText>
 
-                    <ThemedButton
-                        text="Next  →"
-                        onPress={() => changeIndex(currentIndex + 1)}
-                        disabled={currentIndex + 1 >= workoutData.length}
-                        themeColor="softOrange"
-                        textColor="textAccentOrange"
-                    />
+                    <View style={styles.navigationButton}>
+                        {currentIndex < workoutData.length - 1 &&
+                            <ThemedButton
+                                text="Next  →"
+                                onPress={() => changeIndex(currentIndex + 1)}
+                                themeColor="softOrange"
+                                textColor="textAccentOrange"
+                            />
+                        }
+
+                        {currentIndex === workoutData.length - 1 &&
+                            <ThemedButton
+                                text="Complete  →"
+                                onPress={() => changeIndex(currentIndex + 1)}
+                                themeColor="softOrange"
+                                textColor="textAccentOrange"
+                            />
+                        }
+                    </View>
 
                 </View>
             </SafeAreaView>
@@ -260,8 +306,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: Spacing.two,
+        gap: Spacing.six
     },
     swipeInstructionText: {
         alignSelf: 'center'
+    },
+    navigationButton: {
+        flex: 1,
     }
 })
